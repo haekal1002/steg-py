@@ -89,7 +89,8 @@ def decrypt(filename):
 def check_size(filename, message):
     img = Image.open(filename)
     width, height = img.size
-    
+    img.close()
+
     return True if len(message) < width*height*3 else False
 
 def main():
@@ -98,12 +99,18 @@ def main():
 
     delimiter = '1111111111111110' # 2 bytes/16 bits
     
+    # convert jpg to png
+    if filename[-4:] == '.jpg':
+        img = Image.open(filename)
+        img.save(filename[:-4]+'.png')
+        img.close()
+
     if option == '-e':
-        your_message = input('[*] > Enter a message to be encrypted: ')
+        your_message = input('[*] >Enter a message to be encrypted: ')
         raw_data = message2bin(your_message)+delimiter # in binary 
         
         if check_size(filename, raw_data):
-            encrypt('untitled.png', raw_data)
+            encrypt(filename, raw_data)
             print('[+] Encrypted successfully.')
         else:
             print('[-] Size of message is too big.')
